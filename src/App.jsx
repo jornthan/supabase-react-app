@@ -49,26 +49,32 @@ function App() {
   }
 
   return (
-    <div style={{ padding: 20, maxWidth: '100%', width: 500, margin: 'auto' }}>
-      <h2>친구 관찰일지 입력</h2>
-      <Link to="/list">
-        <button style={{ marginBottom: 20, width: '100%', padding: 10 }}>📋 관찰일지 목록 보기</button>
-      </Link>
-      {Object.entries(form).map(([key, val]) => (
-        <div key={key} style={{ marginBottom: 10 }}>
-          <label>{labelMap[key]}:</label><br />
-          {typeof val === 'boolean'
-            ? <input type="checkbox" name={key} checked={val} onChange={handleChange} />
-            : <input type="text" name={key} value={val} onChange={handleChange}
-                     style={{ width: '100%', padding: 8, fontSize: 16 }} />
-          }
+    <div style={{ backgroundColor: '#fffbe6', minHeight: '100vh', padding: 20 }}>
+      <div style={{
+        maxWidth: 600, width: '100%', margin: 'auto', background: '#fff',
+        borderRadius: 10, padding: 20, boxSizing: 'border-box',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)', color: '#333'
+      }}>
+        <h2 style={{ textAlign: 'center' }}>친구 관찰일지 입력</h2>
+        <Link to="/list">
+          <button style={{ marginBottom: 20, width: '100%', padding: 10 }}>📋 관찰일지 목록 보기</button>
+        </Link>
+        {Object.entries(form).map(([key, val]) => (
+          <div key={key} style={{ marginBottom: 10 }}>
+            <label>{labelMap[key]}:</label><br />
+            {typeof val === 'boolean'
+              ? <input type="checkbox" name={key} checked={val} onChange={handleChange} />
+              : <input type="text" name={key} value={val} onChange={handleChange}
+                       style={{ width: '100%', padding: 8, fontSize: 16, boxSizing: 'border-box' }} />
+            }
+          </div>
+        ))}
+        <div style={{ marginBottom: 10 }}>
+          <label>사진 업로드:</label><br/>
+          <input type="file" onChange={e => setImage(e.target.files[0])} />
         </div>
-      ))}
-      <div style={{ marginBottom: 10 }}>
-        <label>사진 업로드:</label><br/>
-        <input type="file" onChange={e => setImage(e.target.files[0])} />
+        <button onClick={handleSubmit} style={{ width: '100%', padding: 10, fontSize: 16 }}>저장하기</button>
       </div>
-      <button onClick={handleSubmit} style={{ width: '100%', padding: 10, fontSize: 16 }}>저장하기</button>
     </div>
   )
 }

@@ -3,11 +3,19 @@ import { useEffect, useState } from 'react'
 import { supabase } from './supabaseClient'
 
 const labelMap = {
-  name: "관찰 대상", goal: "활동 목표", character: "성격", mbti: "MBTI",
-  favorite_food: "좋아하는 음식", hobby: "취미/특기", favorite_subject: "좋아하는 과목",
-  has_boyfriend: "이성 친구 유무", common_with_me: "나와의 공통점",
-  favorite_color: "좋아하는 색깔", live_place: "사는 곳",
-  future_job: "장래희망", weekly_note: "일주일 관찰일지"
+  name: "관찰 대상",
+  goal: "활동 목표",
+  character: "성격",
+  mbti: "MBTI",
+  favorite_food: "좋아하는 음식",
+  hobby: "취미/특기",
+  favorite_subject: "좋아하는 과목",
+  has_boyfriend: "이성 친구 유무",
+  common_with_me: "나와의 공통점",
+  favorite_color: "좋아하는 색깔",
+  live_place: "사는 곳",
+  future_job: "장래희망",
+  weekly_note: "일주일 관찰일지"
 }
 
 export default function Detail() {
@@ -42,7 +50,11 @@ export default function Detail() {
               (key !== 'photo_url' && key !== 'id' && key !== 'created_at') &&
               <tr key={key}>
                 <td style={{ fontWeight: 'bold', padding: '6px 8px' }}>{labelMap[key]}</td>
-                <td style={{ padding: '6px 8px' }}>{val?.toString()}</td>
+                <td style={{ padding: '6px 8px' }}>
+                  {key === 'has_boyfriend'
+                    ? (val ? '있음' : '없음')
+                    : val?.toString()}
+                </td>
               </tr>
             ))}
           </tbody>
