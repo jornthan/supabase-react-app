@@ -1,9 +1,12 @@
+
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export default function PrayList() {
   const navigate = useNavigate()
-
+  const [editMode, setEditMode] = useState(false)
+  const [editingIndex, setEditingIndex] = useState(null)
+  const [editingEntry, setEditingEntry] = useState({})
   const [entries, setEntries] = useState([
     { name: "김민성", target: "이승기, 임성빈", relation: "친구", note: "승기: 유학 간 친구, 6월에 한국에 오면 권유예정\n성빈: 기독교를 싫어함, 복음들어봤는데 7년 연락 안됨" },
     { name: "이수빈", target: "전승민", relation: "친구", note: "전 학교친구, 주말집회 왔었음. 말씀 듣는 건 좋아한다는데 끌어지면 힘듦" },
@@ -16,10 +19,7 @@ export default function PrayList() {
     { name: "문아윤", target: "조새윤", relation: "친구", note: "요즘 교우관계에 힘들어해서 다가가보려 함." },
     { name: "배유진", target: "이윤서", relation: "친구", note: "" }
   ])
-
   const [newEntry, setNewEntry] = useState({ name: '', target: '', relation: '', note: '' })
-  const [editingIndex, setEditingIndex] = useState(null)
-  const [editingEntry, setEditingEntry] = useState({ name: '', target: '', relation: '', note: '' })
 
   const handleNewChange = e => {
     const { name, value } = e.target
@@ -59,9 +59,15 @@ export default function PrayList() {
       <div style={{ textAlign: 'center', marginBottom: 20 }}>
         <button onClick={() => navigate('/')} style={{
           padding: 10, fontSize: 16, borderRadius: 6,
-          background: '#999', color: '#fff', border: 'none'
+          background: '#999', color: '#fff', border: 'none', marginRight: 10
         }}>
           🏠 홈으로
+        </button>
+        <button onClick={() => setEditMode(prev => !prev)} style={{
+          padding: 10, fontSize: 16, borderRadius: 6,
+          background: editMode ? '#f44336' : '#2196f3', color: '#fff', border: 'none'
+        }}>
+          {editMode ? '수정모드 끄기' : '✏️ 수정모드'}
         </button>
       </div>
 
@@ -88,7 +94,7 @@ export default function PrayList() {
               <th style={{ border: '1px solid #ccc', padding: 8 }}>전도대상자 이름</th>
               <th style={{ border: '1px solid #ccc', padding: 8 }}>관계</th>
               <th style={{ border: '1px solid #ccc', padding: 8 }}>소개</th>
-              <th style={{ border: '1px solid #ccc', padding: 8 }}>수정</th>
+              {editMode && <th style={{ border: '1px solid #ccc', padding: 8 }}>수정</th>}
             </tr>
           </thead>
           <tbody>
@@ -108,9 +114,11 @@ export default function PrayList() {
                     <td style={{ border: '1px solid #ccc', padding: 8 }}>{row.target}</td>
                     <td style={{ border: '1px solid #ccc', padding: 8 }}>{row.relation}</td>
                     <td style={{ border: '1px solid #ccc', padding: 8, whiteSpace: 'pre-line' }}>{row.note}</td>
-                    <td style={{ border: '1px solid #ccc', padding: 8 }}>
-                      <button onClick={() => startEdit(idx)}>✏️ 수정</button>
-                    </td>
+                    {editMode && (
+                      <td style={{ border: '1px solid #ccc', padding: 8 }}>
+                        <button onClick={() => startEdit(idx)}>✏️ 수정</button>
+                      </td>
+                    )}
                   </>
                 )}
               </tr>
