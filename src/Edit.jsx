@@ -12,11 +12,16 @@ const labelMap = {
 
 export default function Edit() {
   const { id } = useParams()
-  const nav = useNavigate()
+  const navigate = useNavigate()
   const [form, setForm] = useState({})
+  const [newImage, setNewImage] = useState(null)
 
   useEffect(() => {
-    supabase.from('observation_logs').select('*').eq('id', id).single()
+    supabase
+      .from('observation_logs')
+      .select('*')
+      .eq('id', id)
+      .single()
       .then(({ data }) => setForm(data))
   }, [id])
 
@@ -24,21 +29,50 @@ export default function Edit() {
     const { name, value, type, checked } = e.target
     setForm(prev => ({
       ...prev,
-      [name]: type==='checkbox'? checked : value
+      [name]: type === 'checkbox' ? checked : value
     }))
   }
 
+  const handleImageSelect = e => {
+    setNewImage(e.target.files[0])
+  }
+
+  const uploadImage = async () => {
+    if (!newImage) return form.photo_url || ''
+    const cleanFileName = newImage.name.replace(/[^a-zA-Z0-9.]/g, '')
+    const fileName = `${Date.now()}_${cleanFileName}`
+    const { error } = await supabase.storage.from('observation-photos').upload(fileName, newImage)
+    if (error) {
+      alert('이미지 업로드 실패: ' + error.message)
+      return form.photo_url || ''
+    }
+    const { data: urlData } = supabase.storage.from('observation-photos').getPublicUrl(fileName)
+    return urlData.publicUrl
+  }
+
   const handleUpdate = async () => {
-    await supabase.from('observation_logs').update(form).eq('id', id)
+    const photo_url = await uploadImage()
+    await supabase
+      .from('observation_logs')
+      .update({ ...form, photo_url })
+      .eq('id', id)
     alert('수정 완료')
-    nav('/list')
+    navigate('/list')
   }
 
   return (
     <div style={{ padding: 20, maxWidth: 600, margin: 'auto' }}>
       <h2>✏️ 관찰일지 수정</h2>
-      {Object.entries(form).map(([k,v]) => (
-        (k==='id'||k==='photo_url'||k==='created_at')? null :
+      <div style={{ marginBottom: 10 }}>
+        <label>현재 사진:</label><br/>
+        {form.photo_url && <img src={form.photo_url} alt="사진" style={{ width: '100%', borderRadius: 5, marginBottom: 10 }} />}
+      </div>
+      <div style={{ marginBottom: 20 }}>
+        <label>새 사진 업로드:</label><br/>
+        <input type="file" onChange={handleImageSelect} />
+      </div>
+      {Object.entries(form).map(([k, v]) => (
+        (k === 'id' || k === 'photo_url' || k === 'created_at') ? null :
         <div key={k} style={{ marginBottom: 10 }}>
           <label>{labelMap[k]}:</label><br/>
           {typeof v === 'boolean'
@@ -47,7 +81,9 @@ export default function Edit() {
           }
         </div>
       ))}
-      <button onClick={handleUpdate}>저장</button>
+      <button onClick={handleUpdate} style={{ padding: '10px 20px', background: '#4caf50', color: '#fff', border: 'none', borderRadius: 6 }}>
+        저장
+      </button>
     </div>
   )
 }
