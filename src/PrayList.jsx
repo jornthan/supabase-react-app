@@ -63,52 +63,56 @@ export default function PrayList() {
   }
 
   return (
-    <div style={{ backgroundColor: '#fffbe6', minHeight: '100vh', padding: 20 }}>
-      <h2 style={{ textAlign: 'center', color: '#333' }}>🙏 기도부탁 명단</h2>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
+    <div style={{ backgroundColor: '#f9f9f9', minHeight: '100vh', padding: 24 }}>
+      <h2 style={{ textAlign: 'center', color: '#333', fontSize: 24, marginBottom: 16 }}>🙏 기도부탁 명단</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
         <button
           onClick={() => navigate('/')}
-          style={{ padding: '8px 16px', background: '#999', color: '#fff', border: 'none', borderRadius: 6 }}
+          style={{ padding: '8px 16px', background: '#999', color: '#fff', border: 'none', borderRadius: 6, fontSize: 14 }}
         >
           🏠 홈으로
         </button>
         <button
           onClick={() => setIsDeleteMode(prev => !prev)}
-          style={{ padding: '8px 16px', background: isDeleteMode ? '#607d8b' : '#f44336', color: '#fff', border: 'none', borderRadius: 6 }}
+          style={{
+            padding: '8px 16px',
+            background: isDeleteMode ? '#607d8b' : '#e91e63',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 6,
+            fontSize: 14
+          }}
         >
           {isDeleteMode ? '취소' : '삭제'}
         </button>
       </div>
-      <div style={{ marginBottom: 20 }}>
-        <h4>새 명단 추가</h4>
-        <input name="name" value={newEntry.name} onChange={handleNewChange} placeholder="이름" style={{ marginBottom: 8, width: '100%' }} />
-        <input name="target" value={newEntry.target} onChange={handleNewChange} placeholder="전도대상자 이름" style={{ marginBottom: 8, width: '100%' }} />
-        <input name="relation" value={newEntry.relation} onChange={handleNewChange} placeholder="관계" style={{ marginBottom: 8, width: '100%' }} />
-        <textarea name="note" value={newEntry.note} onChange={handleNewChange} placeholder="소개" style={{ marginBottom: 8, width: '100%', height: 80 }} />
-        <button onClick={handleAdd} style={{ padding: 10, fontSize: 16, background: '#4caf50', color: '#fff', border: 'none', borderRadius: 6, width: '100%' }}>
+      <div style={{ marginBottom: 24, maxWidth: 600, margin: '0 auto' }}>
+        <h4 style={{ fontSize: 18, marginBottom: 8 }}>새 명단 추가</h4>
+        <input name="name" value={newEntry.name} onChange={handleNewChange} placeholder="이름" style={{ marginBottom: 8, width: '100%', padding: 8, fontSize: 14 }} />
+        <input name="target" value={newEntry.target} onChange={handleNewChange} placeholder="전도대상자" style={{ marginBottom: 8, width: '100%', padding: 8, fontSize: 14 }} />
+        <input name="relation" value={newEntry.relation} onChange={handleNewChange} placeholder="관계" style={{ marginBottom: 8, width: '100%', padding: 8, fontSize: 14 }} />
+        <textarea name="note" value={newEntry.note} onChange={handleNewChange} placeholder="소개" style={{ marginBottom: 8, width: '100%', padding: 8, fontSize: 14, height: 80 }} />
+        <button onClick={handleAdd} style={{ padding: '10px', fontSize: 16, background: '#4caf50', color: '#fff', border: 'none', borderRadius: 6, width: '100%' }}>
           추가
         </button>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, maxWidth: 800, margin: '0 auto' }}>
         {entries.map((entry, idx) => (
-          <div key={idx} style={{ position: 'relative', background: '#fff', padding: 16, borderRadius: 10, boxShadow: '0 2px 6px rgba(0,0,0,0.05)' }}>
+          <div key={idx} style={{ position: 'relative', background: '#fff', padding: 16, borderRadius: 8, boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
             {isDeleteMode && (
               <button
                 onClick={() => handleDelete(idx)}
-                style={{ position: 'absolute', top: 8, right: 8, background: '#e91e63', color: '#fff', border: 'none', borderRadius: 4, padding: '4px 8px' }}
+                style={{ position: 'absolute', top: 8, right: 8, background: '#e91e63', color: '#fff', border: 'none', borderRadius: 4, padding: '4px 8px', fontSize: 12 }}
               >
                 삭제
               </button>
             )}
-            <p><strong>이름:</strong> {entry.name}</p>
-            <p><strong>전도대상자:</strong> {entry.target}</p>
-            <p><strong>관계:</strong> {entry.relation}</p>
-            <p><strong>소개:</strong><br />{entry.note}</p>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
-              <button
-                onClick={() => handleEdit(idx)}
-                style={{ padding: '8px 16px', background: '#ff9800', color: '#fff', border: 'none', borderRadius: 6 }}
-              >
+            <p style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>{entry.name}</p>
+            <p style={{ fontSize: 16, marginBottom: 8 }}><strong>전도대상자:</strong> {entry.target}</p>
+            <p style={{ fontSize: 14, marginBottom: 8 }}><strong>관계:</strong> {entry.relation}</p>
+            <p style={{ fontSize: 14, lineHeight: 1.5, whiteSpace: 'pre-wrap' }}><strong>소개:</strong> {entry.note}</p>
+            <div style={{ textAlign: 'right', marginTop: 12 }}>
+              <button onClick={() => handleEdit(idx)} style={{ padding: '8px 12px', background: '#ff9800', color: '#fff', border: 'none', borderRadius: 6, fontSize: 14 }}>
                 수정하기
               </button>
             </div>
@@ -116,5 +120,5 @@ export default function PrayList() {
         ))}
       </div>
     </div>
-)
+  )
 }

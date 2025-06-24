@@ -10,6 +10,16 @@ export default function Home() {
     setLogs(savedLogs)
   }, [])
 
+  const buttonCommon = {
+    width: '80%',
+    maxWidth: '300px',
+    padding: '16px',
+    fontSize: '18px',
+    borderRadius: '8px',
+    border: 'none',
+    margin: '8px 0'
+  }
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -21,37 +31,22 @@ export default function Home() {
       textAlign: 'center'
     }}>
       <h1 style={{ fontSize: 24, marginBottom: 20 }}>친구 관찰 일지 앱</h1>
-      <button onClick={() => navigate('/list')} style={{
-        padding: '12px 24px',
-        fontSize: '16px',
-        backgroundColor: '#2196f3',
-        color: '#fff',
-        border: 'none',
-        borderRadius: 8,
-        marginBottom: 10
-      }}>
+      <button 
+        onClick={() => navigate('/list')} 
+        style={{ ...buttonCommon, backgroundColor: '#2196f3', color: '#fff' }}
+      >
         관찰일지 목록
       </button>
-      <button onClick={() => navigate('/pray')} style={{
-        padding: '12px 24px',
-        fontSize: '16px',
-        backgroundColor: '#ff9800',
-        color: '#fff',
-        border: 'none',
-        borderRadius: 8,
-        marginBottom: 10
-      }}>
+      <button 
+        onClick={() => navigate('/pray')} 
+        style={{ ...buttonCommon, backgroundColor: '#ff9800', color: '#fff' }}
+      >
         기도부탁 명단
       </button>
-      <button onClick={() => navigate('/evangelism')} style={{
-        padding: '12px 24px',
-        fontSize: '16px',
-        backgroundColor: '#4caf50',
-        color: '#fff',
-        border: 'none',
-        borderRadius: 8,
-        marginTop: 20
-      }}>
+      <button 
+        onClick={() => navigate('/evangelism')} 
+        style={{ ...buttonCommon, backgroundColor: '#4caf50', color: '#fff', marginBottom: 0 }}
+      >
         전도활동
       </button>
       <div style={{
