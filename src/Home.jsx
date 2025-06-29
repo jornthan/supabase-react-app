@@ -7,31 +7,34 @@ export default function Home() {
   const [logs, setLogs] = useState([])
 
   useEffect(() => {
-    async function migrateAndFetch() {
-      // 1) Migrate local logs to server
+    async function loadLogs() {
+      // Load local logs
       const localLogs = JSON.parse(localStorage.getItem('activityLogs')) || []
-      if (localLogs.length) {
-        for (const log of localLogs) {
-          const { error } = await supabase
-            .from('activity_logs')
-            .insert([{
-              name: log.name,
-              activity: log.activity,
-              timestamp: log.timestamp
-            }])
-          if (error) console.error('로그 마이그레이션 실패', error)
+
+      // Attempt to fetch server logs
+      let serverLogs = []
+      try {
+        const { data, error } = await supabase
+          .from('activity_logs')
+          .select('name, activity, timestamp')
+          .order('timestamp', { ascending: false })
+        if (error) {
+          console.error('서버 로그 가져오기 실패', error)
+        } else {
+          serverLogs = data.map(log => ({
+            name: log.name,
+            activity: log.activity,
+            timestamp: new Date(log.timestamp).toLocaleString()
+          }))
         }
-        localStorage.removeItem('activityLogs')
+      } catch (err) {
+        console.error('서버 로그 요청 중 에러', err)
       }
-      // 2) Fetch logs from server
-      const { data, error } = await supabase
-        .from('activity_logs')
-        .select('name, activity, timestamp')
-        .order('timestamp', { ascending: false })
-      if (error) console.error('서버 로그 가져오기 실패', error)
-      else setLogs(data)
+
+      // Combine and set logs (local first, then server)
+      setLogs([...localLogs, ...serverLogs])
     }
-    migrateAndFetch()
+    loadLogs()
   }, [])
 
   const buttonCommon = {
@@ -88,7 +91,7 @@ export default function Home() {
         <ul>
           {logs.map((log, idx) => (
             <li key={idx} style={{ marginBottom: 8 }}>
-              {new Date(log.timestamp).toLocaleString()}: {log.name}님이 {log.activity}
+              {log.timestamp}: {log.name}님이 {log.activity}
             </li>
           ))}
         </ul>
