@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { supabase } from './supabaseClient'
 
 export default function ActivityPage() {
   const { index } = useParams()
@@ -9,7 +10,7 @@ export default function ActivityPage() {
   const prayEntries = JSON.parse(localStorage.getItem('praylistEntries')) || []
   const entry = prayEntries[index] || {}
 
-  // Define new activities
+  // Define activities
   const activities = [
     { key: 'prayForFriend', label: '친구를 위해 기도하기' },
     { key: 'inviteHome', label: '집에 초대하기' },
@@ -27,21 +28,36 @@ export default function ActivityPage() {
 
   const [counts, setCounts] = useState(initialCounts)
 
-  const handleCount = act => {
+  const handleCount = async act => {
+    // Update count state
     setCounts(prev => ({
       ...prev,
       [act.key]: prev[act.key] + 1
-    }));
+    }))
 
-    // Log activity
+    // 1) Log to localStorage
     const logEntry = {
       name: entry.name,
       activity: act.label,
       timestamp: new Date().toLocaleString()
     }
-    const logs = JSON.parse(localStorage.getItem('activityLogs')) || []
-    logs.unshift(logEntry)
-    localStorage.setItem('activityLogs', JSON.stringify(logs))
+    const logsLocal = JSON.parse(localStorage.getItem('activityLogs')) || []
+    logsLocal.unshift(logEntry)
+    localStorage.setItem('activityLogs', JSON.stringify(logsLocal))
+
+    // 2) Log to Supabase
+    try {
+      const { error } = await supabase
+        .from('activity_logs')
+        .insert([{
+          name: entry.name,
+          activity: act.label,
+          timestamp: new Date().toISOString()
+        }])
+      if (error) throw error
+    } catch (err) {
+      console.error('Supabase 로그 저장 실패', err)
+    }
   }
 
   if (!entry.name) {
